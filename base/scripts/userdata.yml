@@ -1,0 +1,42 @@
+
+#cloud-config
+# Add groups to the system
+# Adds the ubuntu group with members 'root' and 'sys'
+# and the empty group hashicorp.
+groups:
+  - ubuntu: [root,sys]
+  - mike
+
+# Add users to the system. Users are added after groups are added.
+users:
+  - default
+  - name: mike
+    gecos: mike
+    shell: /bin/bash
+    primary_group: mike
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    lock_passwd: false
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQD4jS7SGn+YdgoqWBJuVF1/wwGrrrLmTT8hR4vFmLyWLxqh4YfBi7K0LfPPBk3uuUkwWF5qm9V+uirH0XTe/9Bo6FfhkplQW8TzVpkBhvREe5qlls3cq/ENKOfpE5X8f1zWVnE6XNmJgXhcmJIcB/lJOMRkzf0MCjX8czxW7LIsWzNNacp/NTwzcG1Ky/svpPBEdst9a8P6PlWOicUHbisSSW7eGo7NrEiHzeL7zH14g/04WXmFIA93iAQPpL15M5wOEEuUDjUFv4XLzNW2nlLMdinQ1qlWAaARviqvcPn5kyqTKn+mS6nwgKDSO4JJppx63jqpHKvJ24HPF7RjYohrWBfbIRz43zFkHq1SQRG7rzHDtPWBvxvyRUSjDpaWE2UVwxG7rzoha/t6UiiZFE37fQ8j2ROxIVKoQn/cMXGS/2VQ6olUY/OGwFQLEvBWq62FbJJmjchEVoG+sA9JOesJNYGKUOodd8ojubHBfts6es6iXLgnAVCpNgJ1RekX8jk=
+  - name: ubuntu
+    gecos: ubuntu
+    shell: /bin/bash
+    primary_group: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCeAOsyPga0Vd5cuUhy1iFGRjhJWoR7l/n+1lOwCT0UzG17oTzFxnUkAwVZR+LNdaW6+vnpNrGt7iAT+jqVIZ1JoFwMJHPRBGlRkFbQB9kQEEIweN6Wmdg6vYrdABaTmYbxpGngn4gJuvJyRkgn8JnGEotrwyTzczPV1wjwQElG438HE5PefP4V+c5EQRiGwiMCyGhFIdPkaRbhOcEoUH7WP/FQgFk1LWayGxUCWpzSe+VfA4Jkd5VAH03TNi83QHwHQ/LPI+YISZETVsPXp7p75ZYyiJcGibbqMsAbpmOoMv+5lXIm/Aty3+V74ErsOY+e/O3Oora9CZMX1WFyF55/
+
+
+mounts:
+ - [ 10.10.0.248:/ /mnt/osrm_data, nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0 ]
+ 
+runcmd:
+  - [ apt-get update ]
+  - [ apt-get --yes install nfs-common ]
+  - apt-get --yes install docker
+  - [ mkdir -p /mnt/osrm_data/ ]
+  - [ mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.10.0.248:/ /mnt/osrm_data/ ]
+  - [ docker run -t -v /mnt/osrm_data/us_west/car:/data osrm/osrm-backend osrm-routed --algorithm mld /data/us-west-latest.osrm ]
