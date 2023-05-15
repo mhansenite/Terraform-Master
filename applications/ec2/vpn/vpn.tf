@@ -1,6 +1,6 @@
 variable "masterMain" {}
 variable "vpn_vars" {}
-variable "admin_vars" {}
+variable "adm_vars" {}
 
 provider "aws" {
     region = "${var.masterMain.region}"
@@ -13,7 +13,7 @@ module "vpn" {
     masterMain = var.masterMain
     app = var.vpn_vars
     app_name = var.vpn_vars.app_name
-    conf = var.admin_vars
+    conf = var.adm_vars
 }
 
 

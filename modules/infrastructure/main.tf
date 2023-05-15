@@ -52,11 +52,11 @@ module "load_balancers" {
     my_subnets_app = module.subnet.my_subnets_app
    }
 
-module "lambda" {
-    source = "./lambda"
-    master=var.masterMain
-    infa = var.infaMain
-   }
+# module "lambda" {
+#     source = "./lambda"
+#     master=var.masterMain
+#     infa = var.infaMain
+#    }
 
 
 module "vpc_peering" {
