@@ -1,0 +1,14 @@
+inputSet:
+  name: Build_Terraform_Master_1690392827220-push-trigger-input-set
+  identifier: Build_Terraform_Master_1690392827220pushtriggerinputset
+  orgIdentifier: default
+  projectIdentifier: default_project
+  pipeline:
+    identifier: Build_Terraform_Master_1690392827220
+    properties:
+      ci:
+        codebase:
+          build:
+            type: branch
+            spec:
+              branch: <+trigger.branch>
